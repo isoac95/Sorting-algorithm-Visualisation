@@ -61,6 +61,69 @@ class App:
                     self.canvas.itemconfig(self.canvas.find_withtag("tag1"), tag=tg2)
                     self.canvas.itemconfig(self.canvas.find_withtag("tag2"), tag=tg1)
         print("done")
+    # self.quick_sort("A", "T")
+
+    def quick_sort(self, low, high):
+        if low < high:
+            pi = self.partition(low, high)
+
+            self.quick_sort(low, chr(ord(pi)-1))
+            self.quick_sort(chr(ord(pi)+1), high)
+
+    def partition(self, low, high):
+        i = chr(ord(low) - 1)
+        pivot = self.height - self.canvas.coords(self.canvas.find_withtag(high))[1]
+
+        for j in range(ord(low) - 65, ord(high) - 65):
+            tg = chr(j + 65)
+            bheight = self.height - self.canvas.coords(self.canvas.find_withtag(tg))[1]
+            if bheight <= pivot:  # and tg != high:
+                i = chr(ord(i) + 1)
+                xdistance = self.canvas.coords(self.canvas.find_withtag(i))[0] - self.canvas.coords(self.canvas.find_withtag(tg))[0]
+                self.canvas.itemconfig(self.canvas.find_withtag(i), fill="orange")
+                self.canvas.itemconfig(self.canvas.find_withtag(tg), fill="orange")
+                for c in range(int(abs(xdistance))):
+                    if xdistance > 0:
+                        self.canvas.move(self.canvas.find_withtag(tg), 1, 0)
+                        self.canvas.move(self.canvas.find_withtag(i), -1, 0)
+                        time.sleep(0.005)
+                        self.canvas.update()
+                    elif xdistance < 0:
+                        self.canvas.move(self.canvas.find_withtag(tg), -1, 0)
+                        self.canvas.move(self.canvas.find_withtag(i), 1, 0)
+                        time.sleep(0.005)
+                        self.canvas.update()
+                    else:
+                        break
+                self.canvas.itemconfig(self.canvas.find_withtag(tg), fill="blue", tag="tag1")
+                self.canvas.itemconfig(self.canvas.find_withtag(i), fill="blue", tag="tag2")
+
+                self.canvas.itemconfig(self.canvas.find_withtag("tag1"), tag=i)
+                self.canvas.itemconfig(self.canvas.find_withtag("tag2"), tag=tg)
+
+        newtg = chr(ord(i) + 1)
+        xdistance = self.canvas.coords(self.canvas.find_withtag(high))[0] - self.canvas.coords(self.canvas.find_withtag(newtg))[0]
+        self.canvas.itemconfig(self.canvas.find_withtag(high), fill="orange")
+        self.canvas.itemconfig(self.canvas.find_withtag(newtg), fill="orange")
+        for c in range(int(abs(xdistance))):
+            if xdistance > 0:
+                self.canvas.move(self.canvas.find_withtag(newtg), 1, 0)
+                self.canvas.move(self.canvas.find_withtag(high), -1, 0)
+                time.sleep(0.005)
+                self.canvas.update()
+            elif xdistance < 0:
+                self.canvas.move(self.canvas.find_withtag(newtg), -1, 0)
+                self.canvas.move(self.canvas.find_withtag(high), 1, 0)
+                time.sleep(0.005)
+                self.canvas.update()
+            else:
+                break
+        self.canvas.itemconfig(self.canvas.find_withtag(newtg), fill="blue", tag="tag1")
+        self.canvas.itemconfig(self.canvas.find_withtag(high), fill="blue", tag="tag2")
+
+        self.canvas.itemconfig(self.canvas.find_withtag("tag1"), tag=high)
+        self.canvas.itemconfig(self.canvas.find_withtag("tag2"), tag=newtg)
+        return chr(ord(i) + 1)
 
 
 if __name__ == '__main__':
