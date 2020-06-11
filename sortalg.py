@@ -22,7 +22,7 @@ class App:
         self.bs_button = tk.Button(self.root, text="BubbleSort", command=lambda: self.bubble_sort())
         self.qs_button = tk.Button(self.root, text="QucikSort", command=lambda: self.quick_sort(chr(0+65), chr(self.bars - 1 + 65)))
         self.reset_button = tk.Button(self.root, text="Reset", command=lambda: self.reset())
-        self.label = tk.Label(self.root, text="Sort", bg="RoyalBlue2")
+        self.label = tk.Label(self.root, text="Choose the sorting alogrithm", bg="RoyalBlue2")
         self.bs_button.grid(row=0, column=0)
         self.qs_button.grid(row=0, column=1, pady=10)
         self.reset_button.grid(row=0, column=2)
@@ -35,7 +35,7 @@ class App:
         y = self.height
         for i in range(self.bars):
             tg = chr(i + 65)
-            self.canvas.create_rectangle(x, y, x + bar_width, random.randint(5, 45)*10, fill="blue", tag=tg)
+            self.canvas.create_rectangle(x, y, x + bar_width, random.randint(5, 45)*10, fill="DodgerBlue3", tag=tg)
             x += bar_width
 
     def animate(self):
@@ -45,15 +45,22 @@ class App:
     def reset(self):
         self.canvas.delete('all')
         self.create_bars()
+        self.label.configure(text="Choose the sorting algorithm")
 
     def bubble_sort(self):
+        self.reset_button.configure(state="disabled")
         n = self.bars
         for i in range(n-1):
-            for j in range(n-i-1):
+            self.label.configure(text="BubbleSort: {}. iteration".format(i+1))
+            for j in range(n-i-1):  # Think about this
                 tg1 = chr(j + 65)
                 tg2 = chr(j + 1 + 65)
                 bheight1 = self.height - self.canvas.coords(self.canvas.find_withtag(tg1))[1]
                 bheight2 = self.height - self.canvas.coords(self.canvas.find_withtag(tg2))[1]
+                self.canvas.itemconfig(self.canvas.find_withtag(tg1), fill="DodgerBlue2")  # Optional
+                self.canvas.itemconfig(self.canvas.find_withtag(tg2), fill="DodgerBlue3")  # Optional
+                self.canvas.update()  # Optional
+                time.sleep(0.1)  # Optional
                 xdistance = self.canvas.coords(self.canvas.find_withtag(tg2))[0] - self.canvas.coords(self.canvas.find_withtag(tg1))[0]
                 if bheight1 > bheight2:
                     self.canvas.itemconfig(self.canvas.find_withtag(tg1), fill="orange")
@@ -63,12 +70,15 @@ class App:
                         self.canvas.move(self.canvas.find_withtag(tg2), -1, 0)
                         time.sleep(0.01)  # 0.05
                         self.canvas.update()
-                    self.canvas.itemconfig(self.canvas.find_withtag(tg1), fill="blue", tag="tag1")
-                    self.canvas.itemconfig(self.canvas.find_withtag(tg2), fill="blue", tag="tag2")
+                    self.canvas.itemconfig(self.canvas.find_withtag(tg1), tag="tag1")  # fill="blue"
+                    self.canvas.itemconfig(self.canvas.find_withtag(tg2), tag="tag2")  # fill="blue"
 
                     self.canvas.itemconfig(self.canvas.find_withtag("tag1"), tag=tg2)
                     self.canvas.itemconfig(self.canvas.find_withtag("tag2"), tag=tg1)
-        print("done")
+                self.canvas.itemconfig(self.canvas.find_withtag(tg1), fill="DodgerBlue3")  # Optionl
+                self.canvas.itemconfig(self.canvas.find_withtag(tg2), fill="DodgerBlue3")  # Optinal
+        self.label.configure(text="Sorted!")
+        self.reset_button.configure(state="active")
 
     def quick_sort(self, low, high):
         if low < high:
@@ -93,17 +103,17 @@ class App:
                     if xdistance > 0:
                         self.canvas.move(self.canvas.find_withtag(tg), 1, 0)
                         self.canvas.move(self.canvas.find_withtag(i), -1, 0)
-                        time.sleep(0.005)
+                        time.sleep(0.01)
                         self.canvas.update()
                     elif xdistance < 0:
                         self.canvas.move(self.canvas.find_withtag(tg), -1, 0)
                         self.canvas.move(self.canvas.find_withtag(i), 1, 0)
-                        time.sleep(0.005)
+                        time.sleep(0.01)
                         self.canvas.update()
                     else:
                         break
-                self.canvas.itemconfig(self.canvas.find_withtag(tg), fill="blue", tag="tag1")
-                self.canvas.itemconfig(self.canvas.find_withtag(i), fill="blue", tag="tag2")
+                self.canvas.itemconfig(self.canvas.find_withtag(tg), fill="DodgerBlue3", tag="tag1")
+                self.canvas.itemconfig(self.canvas.find_withtag(i), fill="DodgerBlue3", tag="tag2")
 
                 self.canvas.itemconfig(self.canvas.find_withtag("tag1"), tag=i)
                 self.canvas.itemconfig(self.canvas.find_withtag("tag2"), tag=tg)
@@ -116,17 +126,17 @@ class App:
             if xdistance > 0:
                 self.canvas.move(self.canvas.find_withtag(newtg), 1, 0)
                 self.canvas.move(self.canvas.find_withtag(high), -1, 0)
-                time.sleep(0.005)
+                time.sleep(0.01)
                 self.canvas.update()
             elif xdistance < 0:
                 self.canvas.move(self.canvas.find_withtag(newtg), -1, 0)
                 self.canvas.move(self.canvas.find_withtag(high), 1, 0)
-                time.sleep(0.005)
+                time.sleep(0.01)
                 self.canvas.update()
             else:
                 break
-        self.canvas.itemconfig(self.canvas.find_withtag(newtg), fill="blue", tag="tag1")
-        self.canvas.itemconfig(self.canvas.find_withtag(high), fill="blue", tag="tag2")
+        self.canvas.itemconfig(self.canvas.find_withtag(newtg), fill="DodgerBlue3", tag="tag1")
+        self.canvas.itemconfig(self.canvas.find_withtag(high), fill="DodgerBlue3", tag="tag2")
 
         self.canvas.itemconfig(self.canvas.find_withtag("tag1"), tag=high)
         self.canvas.itemconfig(self.canvas.find_withtag("tag2"), tag=newtg)
