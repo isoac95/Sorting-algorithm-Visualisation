@@ -19,13 +19,17 @@ class App:
         self.root.mainloop()
 
     def create_ui(self):
-        self.play_button = tk.Button(self.root, text="Play", command=lambda: self.bubble_sort())
-        self.play_button.pack(pady=10)
-        self.canvas.pack()
+        self.bs_button = tk.Button(self.root, text="BubbleSort", command=lambda: self.bubble_sort())
+        self.qs_button = tk.Button(self.root, text="QucikSort", command=lambda: self.quick_sort(chr(0+65), chr(self.bars - 1 + 65)))
+        self.reset_button = tk.Button(self.root, text="Reset", command=lambda: self.reset())
+        self.label = tk.Label(self.root, text="Sort", bg="RoyalBlue2")
+        self.bs_button.grid(row=0, column=0)
+        self.qs_button.grid(row=0, column=1, pady=10)
+        self.reset_button.grid(row=0, column=2)
+        self.canvas.grid(row=1, column=0, columnspan=3, padx=10)
+        self.label.grid(row=2, column=1, pady=5)
 
     def create_bars(self):
-        # self.canvas.update()
-        # print(self.canvas.winfo_width(), self.canvas.winfo_height())
         bar_width = self.width // self.bars
         x = 0
         y = self.height
@@ -37,6 +41,10 @@ class App:
     def animate(self):
         self.canvas.update()
         self.canvas.after(12, self.animate)
+
+    def reset(self):
+        self.canvas.delete('all')
+        self.create_bars()
 
     def bubble_sort(self):
         n = self.bars
@@ -53,7 +61,7 @@ class App:
                     for c in range(int(xdistance)):
                         self.canvas.move(self.canvas.find_withtag(tg1), 1, 0)
                         self.canvas.move(self.canvas.find_withtag(tg2), -1, 0)
-                        time.sleep(0.05)
+                        time.sleep(0.01)  # 0.05
                         self.canvas.update()
                     self.canvas.itemconfig(self.canvas.find_withtag(tg1), fill="blue", tag="tag1")
                     self.canvas.itemconfig(self.canvas.find_withtag(tg2), fill="blue", tag="tag2")
@@ -61,14 +69,13 @@ class App:
                     self.canvas.itemconfig(self.canvas.find_withtag("tag1"), tag=tg2)
                     self.canvas.itemconfig(self.canvas.find_withtag("tag2"), tag=tg1)
         print("done")
-    # self.quick_sort("A", "T")
 
     def quick_sort(self, low, high):
         if low < high:
-            pi = self.partition(low, high)
+            p = self.partition(low, high)
 
-            self.quick_sort(low, chr(ord(pi)-1))
-            self.quick_sort(chr(ord(pi)+1), high)
+            self.quick_sort(low, chr(ord(p)-1))
+            self.quick_sort(chr(ord(p)+1), high)
 
     def partition(self, low, high):
         i = chr(ord(low) - 1)
@@ -77,7 +84,7 @@ class App:
         for j in range(ord(low) - 65, ord(high) - 65):
             tg = chr(j + 65)
             bheight = self.height - self.canvas.coords(self.canvas.find_withtag(tg))[1]
-            if bheight <= pivot:  # and tg != high:
+            if bheight <= pivot:
                 i = chr(ord(i) + 1)
                 xdistance = self.canvas.coords(self.canvas.find_withtag(i))[0] - self.canvas.coords(self.canvas.find_withtag(tg))[0]
                 self.canvas.itemconfig(self.canvas.find_withtag(i), fill="orange")
