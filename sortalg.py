@@ -90,6 +90,7 @@ class App:
     def partition(self, low, high):
         i = chr(ord(low) - 1)
         pivot = self.height - self.canvas.coords(self.canvas.find_withtag(high))[1]
+        self.canvas.itemconfig(self.canvas.find_withtag(high), fill="DodgerBlue4")
 
         for j in range(ord(low) - 65, ord(high) - 65):
             tg = chr(j + 65)
