@@ -12,6 +12,8 @@ class App:
         self.width = 500
         self.height = 500
         self.bars = 20
+        self.alg = tk.StringVar()
+        self.alg.set("BubbleSort")
         self.canvas = tk.Canvas(self.root, width=self.width, height=self.height, bd=0, highlightthickness=0)
         self.create_ui()
         self.create_bars()
@@ -19,12 +21,12 @@ class App:
         self.root.mainloop()
 
     def create_ui(self):
-        self.bs_button = tk.Button(self.root, text="BubbleSort", command=lambda: self.bubble_sort())
-        self.qs_button = tk.Button(self.root, text="QucikSort", command=lambda: self.quick_sort(chr(0+65), chr(self.bars - 1 + 65)))
         self.reset_button = tk.Button(self.root, text="Reset", command=lambda: self.reset())
+        self.play_button = tk.Button(self.root, text="Play", command=lambda: self.play())
+        self.drop_menu = tk.OptionMenu(self.root, self.alg, "BubbleSort", "QuickSort")
         self.label = tk.Label(self.root, text="Choose the sorting alogrithm", bg="RoyalBlue2")
-        self.bs_button.grid(row=0, column=0)
-        self.qs_button.grid(row=0, column=1, pady=10)
+        self.drop_menu.grid(row=0, column=0, pady=10)
+        self.play_button.grid(row=0, column=1)
         self.reset_button.grid(row=0, column=2)
         self.canvas.grid(row=1, column=0, columnspan=3, padx=10)
         self.label.grid(row=2, column=1, pady=5)
@@ -42,16 +44,29 @@ class App:
         self.canvas.update()
         self.canvas.after(12, self.animate)
 
+    def play(self):
+        self.reset_button.configure(state="disabled")
+        self.play_button.configure(state="disabled")
+        self.drop_menu.configure(state="disabled")
+        if self.alg.get() == "BubbleSort":
+            self.bubble_sort()
+            self.label.configure(text="BubbleSorted! ;)")
+        elif self.alg.get() == "QuickSort":
+            self.quick_sort(chr(0+65), chr(self.bars - 1 + 65))
+            self.label.configure(text="QuickSorted! ;)")
+        self.reset_button.configure(state="active")
+        self.play_button.configure(state="active")
+        self.drop_menu.configure(state="active")
+
     def reset(self):
         self.canvas.delete('all')
         self.create_bars()
         self.label.configure(text="Choose the sorting algorithm")
 
     def bubble_sort(self):
-        self.reset_button.configure(state="disabled")
         n = self.bars
         for i in range(n-1):
-            self.label.configure(text="BubbleSort: {}. iteration".format(i+1))
+            self.label.configure(text="BubbleSorting: {}. iteration".format(i+1))
             for j in range(n-i-1):  # Think about this
                 tg1 = chr(j + 65)
                 tg2 = chr(j + 1 + 65)
@@ -77,10 +92,9 @@ class App:
                     self.canvas.itemconfig(self.canvas.find_withtag("tag2"), tag=tg1)
                 self.canvas.itemconfig(self.canvas.find_withtag(tg1), fill="DodgerBlue3")  # Optionl
                 self.canvas.itemconfig(self.canvas.find_withtag(tg2), fill="DodgerBlue3")  # Optinal
-        self.label.configure(text="Sorted!")
-        self.reset_button.configure(state="active")
 
     def quick_sort(self, low, high):
+        self.label.configure(text="QuickSorting....pivot element has darker color")
         if low < high:
             p = self.partition(low, high)
 
