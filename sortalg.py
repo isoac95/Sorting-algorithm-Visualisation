@@ -23,7 +23,7 @@ class App:
     def create_ui(self):
         self.reset_button = tk.Button(self.root, text="Reset", command=lambda: self.reset())
         self.play_button = tk.Button(self.root, text="Play", command=lambda: self.play())
-        self.drop_menu = tk.OptionMenu(self.root, self.alg, "BubbleSort", "QuickSort")
+        self.drop_menu = tk.OptionMenu(self.root, self.alg, "BubbleSort", "HeapSort", "QuickSort")
         self.label = tk.Label(self.root, text="Choose the sorting alogrithm", bg="RoyalBlue2")
         self.drop_menu.grid(row=0, column=0, pady=10)
         self.play_button.grid(row=0, column=1)
@@ -54,6 +54,9 @@ class App:
         elif self.alg.get() == "QuickSort":
             self.quick_sort(chr(0+65), chr(self.bars - 1 + 65))
             self.label.configure(text="QuickSorted! ;)")
+        elif self.alg.get() == "HeapSort":
+            self.heap_sort()
+            self.label.configure(text="HeapSorted! ;)")
         self.reset_button.configure(state="active")
         self.play_button.configure(state="active")
         self.drop_menu.configure(state="active")
@@ -156,6 +159,75 @@ class App:
         self.canvas.itemconfig(self.canvas.find_withtag("tag1"), tag=high)
         self.canvas.itemconfig(self.canvas.find_withtag("tag2"), tag=newtg)
         return chr(ord(i) + 1)
+
+    def heap_sort(self):
+        self.label.configure(text="HeapSorting")
+        n = self.bars
+        for i in range(n // 2 - 1, -1, -1):
+            self.heapify(n, i)
+
+        for i in range(n-1, 0, -1):
+            tgz = chr(0 + 65)
+            tgi = chr(i + 65)
+
+            xdistance = self.canvas.coords(self.canvas.find_withtag(tgi))[0] - self.canvas.coords(self.canvas.find_withtag(tgz))[0]
+            self.canvas.itemconfig(self.canvas.find_withtag(tgz), fill="orange")
+            self.canvas.itemconfig(self.canvas.find_withtag(tgi), fill="orange")
+            for c in range(int(abs(xdistance))):
+                self.canvas.move(self.canvas.find_withtag(tgz), 1, 0)
+                self.canvas.move(self.canvas.find_withtag(tgi), -1, 0)
+                time.sleep(0.01)
+                self.canvas.update()
+            self.canvas.itemconfig(self.canvas.find_withtag(tgi), fill="DodgerBlue3", tag="tag1")
+            self.canvas.itemconfig(self.canvas.find_withtag(tgz), fill="DodgerBlue3", tag="tag2")
+            self.canvas.itemconfig(self.canvas.find_withtag("tag1"), tag=tgz)
+            self.canvas.itemconfig(self.canvas.find_withtag("tag2"), tag=tgi)
+            self.heapify(i, 0)
+
+    def heapify(self, n, i):
+        largest = chr(i + 65)
+        left = 2 * i + 1
+        right = 2 * i + 2
+        tgl = chr(left + 65)
+        tgr = chr(right + 65)
+        tgi = chr(i + 65)
+        bheighti = self.height - self.canvas.coords(self.canvas.find_withtag(tgi))[1]
+
+        if left < n:
+            bheightl = self.height - self.canvas.coords(self.canvas.find_withtag(tgl))[1]
+            if bheighti < bheightl:
+                largest = tgl
+
+        bheightlrg = self.height - self.canvas.coords(self.canvas.find_withtag(largest))[1]
+        if right < n:
+            bheightr = self.height - self.canvas.coords(self.canvas.find_withtag(tgr))[1]
+            if bheightlrg < bheightr:
+                largest = tgr
+
+        if largest != tgi:
+            xdistance = self.canvas.coords(self.canvas.find_withtag(largest))[0] - self.canvas.coords(self.canvas.find_withtag(tgi))[0]
+            self.canvas.itemconfig(self.canvas.find_withtag(tgi), fill="orange")
+            self.canvas.itemconfig(self.canvas.find_withtag(largest), fill="orange")
+            for c in range(int(abs(xdistance))):
+                if xdistance > 0:
+                    self.canvas.move(self.canvas.find_withtag(tgi), 1, 0)
+                    self.canvas.move(self.canvas.find_withtag(largest), -1, 0)
+                    time.sleep(0.01)
+                    self.canvas.update()
+                elif xdistance < 0:
+                    self.canvas.move(self.canvas.find_withtag(tgi), -1, 0)
+                    self.canvas.move(self.canvas.find_withtag(largest), 1, 0)
+                    time.sleep(0.01)
+                    self.canvas.update()
+                else:
+                    break
+            self.canvas.itemconfig(self.canvas.find_withtag(tgi), fill="DodgerBlue3", tag="tag1")
+            self.canvas.itemconfig(self.canvas.find_withtag(largest), fill="DodgerBlue3", tag="tag2")
+
+            self.canvas.itemconfig(self.canvas.find_withtag("tag1"), tag=largest)
+            self.canvas.itemconfig(self.canvas.find_withtag("tag2"), tag=tgi)
+
+            self.heapify(n, ord(largest)-65)
 
 
 if __name__ == '__main__':
