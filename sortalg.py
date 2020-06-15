@@ -66,8 +66,12 @@ class App:
             self.canvas.delete('ltext')
             self.canvas.delete('rtext')
         elif self.alg.get() == "QuickSort":
-            self.quick_sort(chr(0+65), chr(self.bars - 1 + 65))
+            self.canvas.create_rectangle(0, 0, 20, 20, fill="DodgerBlue4", tag="qspiv")
+            self.canvas.create_text(25, 10, text="Pivot element", anchor="w", tag="txtpiv")
+            self.quick_sort([chr(c+65) for c in range(20)], 0, self.bars-1)
             self.label.configure(text="QuickSorted! ;)")
+            self.canvas.delete('qspiv')
+            self.canvas.delete('txtpiv')
         self.reset_button.configure(state="active")
 
     def reset(self):
@@ -84,91 +88,83 @@ class App:
         for i in range(n-1):
             self.canvas.itemconfig(self.canvas.find_withtag("bs"), text="{}. iteration".format(i+1))
             for j in range(n-1):
-                tg1 = arr[j]
-                tg2 = arr[j+1]
-                bheight1 = self.height - self.canvas.coords(self.canvas.find_withtag(tg1))[1]
-                bheight2 = self.height - self.canvas.coords(self.canvas.find_withtag(tg2))[1]
-                self.canvas.itemconfig(self.canvas.find_withtag(tg1), fill="DodgerBlue2")
-                self.canvas.itemconfig(self.canvas.find_withtag(tg2), fill="DodgerBlue2")
+                bheight1 = self.height - self.canvas.coords(self.canvas.find_withtag(arr[j]))[1]
+                bheight2 = self.height - self.canvas.coords(self.canvas.find_withtag(arr[j+1]))[1]
+                self.canvas.itemconfig(self.canvas.find_withtag(arr[j]), fill="DodgerBlue2")
+                self.canvas.itemconfig(self.canvas.find_withtag(arr[j+1]), fill="DodgerBlue2")
                 self.canvas.update()
                 time.sleep(0.1)
-                xdistance = self.canvas.coords(self.canvas.find_withtag(tg2))[0] - self.canvas.coords(self.canvas.find_withtag(tg1))[0]
+                xdistance = self.canvas.coords(self.canvas.find_withtag(arr[j+1]))[0] - self.canvas.coords(self.canvas.find_withtag(arr[j]))[0]
                 if bheight1 > bheight2:
-                    self.canvas.itemconfig(self.canvas.find_withtag(tg1), fill="orange")
-                    self.canvas.itemconfig(self.canvas.find_withtag(tg2), fill="orange")
+                    self.canvas.itemconfig(self.canvas.find_withtag(arr[j]), fill="orange")
+                    self.canvas.itemconfig(self.canvas.find_withtag(arr[j+1]), fill="orange")
                     for c in range(int(xdistance)):
-                        self.canvas.move(self.canvas.find_withtag(tg1), 1, 0)
-                        self.canvas.move(self.canvas.find_withtag(tg2), -1, 0)
+                        self.canvas.move(self.canvas.find_withtag(arr[j]), 1, 0)
+                        self.canvas.move(self.canvas.find_withtag(arr[j+1]), -1, 0)
                         time.sleep(0.01)
                         self.canvas.update()
                     arr[j], arr[j+1] = arr[j+1], arr[j]
-                self.canvas.itemconfig(self.canvas.find_withtag(tg1), fill="DodgerBlue3")
-                self.canvas.itemconfig(self.canvas.find_withtag(tg2), fill="DodgerBlue3")
+                self.canvas.itemconfig(self.canvas.find_withtag(arr[j]), fill="DodgerBlue3")
+                self.canvas.itemconfig(self.canvas.find_withtag(arr[j+1]), fill="DodgerBlue3")
         self.canvas.delete('bs')
 
-    def quick_sort(self, low, high):
-        self.label.configure(text="QuickSorting....pivot element has darker color")
+    def quick_sort(self, arr, low, high):
+        self.label.configure(text="QuickSorting...")
         if low < high:
-            p = self.partition(low, high)
+            p = self.partition(arr, low, high)
 
-            self.quick_sort(low, chr(ord(p)-1))
-            self.quick_sort(chr(ord(p)+1), high)
+            self.quick_sort(arr, low, p-1)
+            self.quick_sort(arr, p+1, high)
 
-    def partition(self, low, high):
-        i = chr(ord(low) - 1)
-        pivot = self.height - self.canvas.coords(self.canvas.find_withtag(high))[1]
-        self.canvas.itemconfig(self.canvas.find_withtag(high), fill="DodgerBlue4")
+    def partition(self, arr, low, high):
+        i = low - 1
+        pivot = self.height - self.canvas.coords(self.canvas.find_withtag(arr[high]))[1]
+        self.canvas.itemconfig(self.canvas.find_withtag(arr[high]), fill="DodgerBlue4")
 
-        for j in range(ord(low) - 65, ord(high) - 65):
-            tg = chr(j + 65)
-            bheight = self.height - self.canvas.coords(self.canvas.find_withtag(tg))[1]
+        for j in range(low, high):
+            bheight = self.height - self.canvas.coords(self.canvas.find_withtag(arr[j]))[1]
             if bheight <= pivot:
-                i = chr(ord(i) + 1)
-                xdistance = self.canvas.coords(self.canvas.find_withtag(i))[0] - self.canvas.coords(self.canvas.find_withtag(tg))[0]
-                self.canvas.itemconfig(self.canvas.find_withtag(i), fill="orange")
-                self.canvas.itemconfig(self.canvas.find_withtag(tg), fill="orange")
+                i += 1
+                xdistance = self.canvas.coords(self.canvas.find_withtag(arr[i]))[0] - self.canvas.coords(self.canvas.find_withtag(arr[j]))[0]
+                self.canvas.itemconfig(self.canvas.find_withtag(arr[i]), fill="orange")
+                self.canvas.itemconfig(self.canvas.find_withtag(arr[j]), fill="orange")
                 for c in range(int(abs(xdistance))):
                     if xdistance > 0:
-                        self.canvas.move(self.canvas.find_withtag(tg), 1, 0)
-                        self.canvas.move(self.canvas.find_withtag(i), -1, 0)
+                        self.canvas.move(self.canvas.find_withtag(arr[j]), 1, 0)
+                        self.canvas.move(self.canvas.find_withtag(arr[i]), -1, 0)
                         time.sleep(0.01)
                         self.canvas.update()
                     elif xdistance < 0:
-                        self.canvas.move(self.canvas.find_withtag(tg), -1, 0)
-                        self.canvas.move(self.canvas.find_withtag(i), 1, 0)
+                        self.canvas.move(self.canvas.find_withtag(arr[j]), -1, 0)
+                        self.canvas.move(self.canvas.find_withtag(arr[i]), 1, 0)
                         time.sleep(0.01)
                         self.canvas.update()
                     else:
                         break
-                self.canvas.itemconfig(self.canvas.find_withtag(tg), fill="DodgerBlue3", tag="tag1")
-                self.canvas.itemconfig(self.canvas.find_withtag(i), fill="DodgerBlue3", tag="tag2")
+                self.canvas.itemconfig(self.canvas.find_withtag(arr[j]), fill="DodgerBlue3")
+                self.canvas.itemconfig(self.canvas.find_withtag(arr[i]), fill="DodgerBlue3")
+                arr[i], arr[j] = arr[j], arr[i]
 
-                self.canvas.itemconfig(self.canvas.find_withtag("tag1"), tag=i)
-                self.canvas.itemconfig(self.canvas.find_withtag("tag2"), tag=tg)
-
-        newtg = chr(ord(i) + 1)
-        xdistance = self.canvas.coords(self.canvas.find_withtag(high))[0] - self.canvas.coords(self.canvas.find_withtag(newtg))[0]
-        self.canvas.itemconfig(self.canvas.find_withtag(high), fill="orange")
-        self.canvas.itemconfig(self.canvas.find_withtag(newtg), fill="orange")
+        xdistance = self.canvas.coords(self.canvas.find_withtag(arr[high]))[0] - self.canvas.coords(self.canvas.find_withtag(arr[i+1]))[0]
+        self.canvas.itemconfig(self.canvas.find_withtag(arr[high]), fill="orange")
+        self.canvas.itemconfig(self.canvas.find_withtag(arr[i+1]), fill="orange")
         for c in range(int(abs(xdistance))):
             if xdistance > 0:
-                self.canvas.move(self.canvas.find_withtag(newtg), 1, 0)
-                self.canvas.move(self.canvas.find_withtag(high), -1, 0)
+                self.canvas.move(self.canvas.find_withtag(arr[i+1]), 1, 0)
+                self.canvas.move(self.canvas.find_withtag(arr[high]), -1, 0)
                 time.sleep(0.01)
                 self.canvas.update()
             elif xdistance < 0:
-                self.canvas.move(self.canvas.find_withtag(newtg), -1, 0)
-                self.canvas.move(self.canvas.find_withtag(high), 1, 0)
+                self.canvas.move(self.canvas.find_withtag(arr[i+1]), -1, 0)
+                self.canvas.move(self.canvas.find_withtag(arr[high]), 1, 0)
                 time.sleep(0.01)
                 self.canvas.update()
             else:
                 break
-        self.canvas.itemconfig(self.canvas.find_withtag(newtg), fill="DodgerBlue3", tag="tag1")
-        self.canvas.itemconfig(self.canvas.find_withtag(high), fill="DodgerBlue3", tag="tag2")
-
-        self.canvas.itemconfig(self.canvas.find_withtag("tag1"), tag=high)
-        self.canvas.itemconfig(self.canvas.find_withtag("tag2"), tag=newtg)
-        return chr(ord(i) + 1)
+        self.canvas.itemconfig(self.canvas.find_withtag(arr[i+1]), fill="DodgerBlue3")
+        self.canvas.itemconfig(self.canvas.find_withtag(arr[high]), fill="DodgerBlue3")
+        arr[i+1], arr[high] = arr[high], arr[i+1]
+        return i + 1
 
     def heap_sort(self):
         self.label.configure(text="HeapSorting")
