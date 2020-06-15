@@ -49,7 +49,7 @@ class App:
         self.play_button.configure(state="disabled")
         self.drop_menu.configure(state="disabled")
         if self.alg.get() == "BubbleSort":
-            self.bubble_sort()
+            self.bubble_sort([chr(c+65) for c in range(20)])
             self.label.configure(text="BubbleSorted! ;)")
         elif self.alg.get() == "HeapSort":
             self.heap_sort()
@@ -77,19 +77,21 @@ class App:
         self.play_button.configure(state="active")
         self.drop_menu.configure(state="active")
 
-    def bubble_sort(self):
-        n = self.bars
+    def bubble_sort(self, arr):
+        self.label.configure(text="BubbleSorting...")
+        n = len(arr)
+        self.canvas.create_text(250, 0, text="", anchor="n", tag="bs")
         for i in range(n-1):
-            self.label.configure(text="BubbleSorting: {}. iteration".format(i+1))
-            for j in range(n-i-1):  # Think about this
-                tg1 = chr(j + 65)
-                tg2 = chr(j + 1 + 65)
+            self.canvas.itemconfig(self.canvas.find_withtag("bs"), text="{}. iteration".format(i+1))
+            for j in range(n-1):
+                tg1 = arr[j]
+                tg2 = arr[j+1]
                 bheight1 = self.height - self.canvas.coords(self.canvas.find_withtag(tg1))[1]
                 bheight2 = self.height - self.canvas.coords(self.canvas.find_withtag(tg2))[1]
-                self.canvas.itemconfig(self.canvas.find_withtag(tg1), fill="DodgerBlue2")  # Optional
-                self.canvas.itemconfig(self.canvas.find_withtag(tg2), fill="DodgerBlue3")  # Optional
-                self.canvas.update()  # Optional
-                time.sleep(0.1)  # Optional
+                self.canvas.itemconfig(self.canvas.find_withtag(tg1), fill="DodgerBlue2")
+                self.canvas.itemconfig(self.canvas.find_withtag(tg2), fill="DodgerBlue2")
+                self.canvas.update()
+                time.sleep(0.1)
                 xdistance = self.canvas.coords(self.canvas.find_withtag(tg2))[0] - self.canvas.coords(self.canvas.find_withtag(tg1))[0]
                 if bheight1 > bheight2:
                     self.canvas.itemconfig(self.canvas.find_withtag(tg1), fill="orange")
@@ -97,15 +99,12 @@ class App:
                     for c in range(int(xdistance)):
                         self.canvas.move(self.canvas.find_withtag(tg1), 1, 0)
                         self.canvas.move(self.canvas.find_withtag(tg2), -1, 0)
-                        time.sleep(0.01)  # 0.05
+                        time.sleep(0.01)
                         self.canvas.update()
-                    self.canvas.itemconfig(self.canvas.find_withtag(tg1), tag="tag1")  # fill="blue"
-                    self.canvas.itemconfig(self.canvas.find_withtag(tg2), tag="tag2")  # fill="blue"
-
-                    self.canvas.itemconfig(self.canvas.find_withtag("tag1"), tag=tg2)
-                    self.canvas.itemconfig(self.canvas.find_withtag("tag2"), tag=tg1)
-                self.canvas.itemconfig(self.canvas.find_withtag(tg1), fill="DodgerBlue3")  # Optionl
-                self.canvas.itemconfig(self.canvas.find_withtag(tg2), fill="DodgerBlue3")  # Optinal
+                    arr[j], arr[j+1] = arr[j+1], arr[j]
+                self.canvas.itemconfig(self.canvas.find_withtag(tg1), fill="DodgerBlue3")
+                self.canvas.itemconfig(self.canvas.find_withtag(tg2), fill="DodgerBlue3")
+        self.canvas.delete('bs')
 
     def quick_sort(self, low, high):
         self.label.configure(text="QuickSorting....pivot element has darker color")
