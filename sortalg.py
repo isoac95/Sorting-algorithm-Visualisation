@@ -52,7 +52,7 @@ class App:
             self.bubble_sort([chr(c+65) for c in range(20)])
             self.label.configure(text="BubbleSorted! ;)")
         elif self.alg.get() == "HeapSort":
-            self.heap_sort()
+            self.heap_sort([chr(c+65) for c in range(20)])
             self.label.configure(text="HeapSorted! ;)")
         elif self.alg.get() == "MergeSort":
             self.canvas.create_rectangle(0, 0, 20, 20, fill="CadetBlue1", tag="larray")
@@ -166,74 +166,66 @@ class App:
         arr[i+1], arr[high] = arr[high], arr[i+1]
         return i + 1
 
-    def heap_sort(self):
-        self.label.configure(text="HeapSorting")
-        n = self.bars
+    def heap_sort(self, arr):
+        self.label.configure(text="HeapSorting...")
+        n = len(arr)
         for i in range(n // 2 - 1, -1, -1):
-            self.heapify(n, i)
+            self.heapify(arr, n, i)
 
         for i in range(n-1, 0, -1):
-            tgz = chr(0 + 65)
-            tgi = chr(i + 65)
 
-            xdistance = self.canvas.coords(self.canvas.find_withtag(tgi))[0] - self.canvas.coords(self.canvas.find_withtag(tgz))[0]
-            self.canvas.itemconfig(self.canvas.find_withtag(tgz), fill="orange")
-            self.canvas.itemconfig(self.canvas.find_withtag(tgi), fill="orange")
+            xdistance = self.canvas.coords(self.canvas.find_withtag(arr[i]))[0] - self.canvas.coords(self.canvas.find_withtag(arr[0]))[0]
+            self.canvas.itemconfig(self.canvas.find_withtag(arr[0]), fill="orange")
+            self.canvas.itemconfig(self.canvas.find_withtag(arr[i]), fill="orange")
             for c in range(int(abs(xdistance))):
-                self.canvas.move(self.canvas.find_withtag(tgz), 1, 0)
-                self.canvas.move(self.canvas.find_withtag(tgi), -1, 0)
+                self.canvas.move(self.canvas.find_withtag(arr[0]), 1, 0)
+                self.canvas.move(self.canvas.find_withtag(arr[i]), -1, 0)
                 time.sleep(0.01)
                 self.canvas.update()
-            self.canvas.itemconfig(self.canvas.find_withtag(tgi), fill="DodgerBlue3", tag="tag1")
-            self.canvas.itemconfig(self.canvas.find_withtag(tgz), fill="DodgerBlue3", tag="tag2")
-            self.canvas.itemconfig(self.canvas.find_withtag("tag1"), tag=tgz)
-            self.canvas.itemconfig(self.canvas.find_withtag("tag2"), tag=tgi)
-            self.heapify(i, 0)
+            self.canvas.itemconfig(self.canvas.find_withtag(arr[i]), fill="DodgerBlue3")
+            self.canvas.itemconfig(self.canvas.find_withtag(arr[0]), fill="DodgerBlue3")
+            arr[i], arr[0] = arr[0], arr[i]
+            self.heapify(arr, i, 0)
 
-    def heapify(self, n, i):
-        largest = chr(i + 65)
+    def heapify(self, arr, n, i):
+        largest = i
         left = 2 * i + 1
         right = 2 * i + 2
-        tgl = chr(left + 65)
-        tgr = chr(right + 65)
-        tgi = chr(i + 65)
-        bheighti = self.height - self.canvas.coords(self.canvas.find_withtag(tgi))[1]
+        bheighti = self.height - self.canvas.coords(self.canvas.find_withtag(arr[i]))[1]
 
         if left < n:
-            bheightl = self.height - self.canvas.coords(self.canvas.find_withtag(tgl))[1]
+            bheightl = self.height - self.canvas.coords(self.canvas.find_withtag(arr[left]))[1]
             if bheighti < bheightl:
-                largest = tgl
+                largest = left
 
-        bheightlrg = self.height - self.canvas.coords(self.canvas.find_withtag(largest))[1]
+        bheightlrg = self.height - self.canvas.coords(self.canvas.find_withtag(arr[largest]))[1]
         if right < n:
-            bheightr = self.height - self.canvas.coords(self.canvas.find_withtag(tgr))[1]
+            bheightr = self.height - self.canvas.coords(self.canvas.find_withtag(arr[right]))[1]
             if bheightlrg < bheightr:
-                largest = tgr
+                largest = right
 
-        if largest != tgi:
-            xdistance = self.canvas.coords(self.canvas.find_withtag(largest))[0] - self.canvas.coords(self.canvas.find_withtag(tgi))[0]
-            self.canvas.itemconfig(self.canvas.find_withtag(tgi), fill="orange")
-            self.canvas.itemconfig(self.canvas.find_withtag(largest), fill="orange")
+        if largest != i:
+            xdistance = self.canvas.coords(self.canvas.find_withtag(arr[largest]))[0] - self.canvas.coords(self.canvas.find_withtag(arr[i]))[0]
+            self.canvas.itemconfig(self.canvas.find_withtag(arr[i]), fill="orange")
+            self.canvas.itemconfig(self.canvas.find_withtag(arr[largest]), fill="orange")
             for c in range(int(abs(xdistance))):
                 if xdistance > 0:
-                    self.canvas.move(self.canvas.find_withtag(tgi), 1, 0)
-                    self.canvas.move(self.canvas.find_withtag(largest), -1, 0)
+                    self.canvas.move(self.canvas.find_withtag(arr[i]), 1, 0)
+                    self.canvas.move(self.canvas.find_withtag(arr[largest]), -1, 0)
                     time.sleep(0.01)
                     self.canvas.update()
                 elif xdistance < 0:
-                    self.canvas.move(self.canvas.find_withtag(tgi), -1, 0)
-                    self.canvas.move(self.canvas.find_withtag(largest), 1, 0)
+                    self.canvas.move(self.canvas.find_withtag(arr[i]), -1, 0)
+                    self.canvas.move(self.canvas.find_withtag(arr[largest]), 1, 0)
                     time.sleep(0.01)
                     self.canvas.update()
                 else:
                     break
-            self.canvas.itemconfig(self.canvas.find_withtag(tgi), fill="DodgerBlue3", tag="tag1")
-            self.canvas.itemconfig(self.canvas.find_withtag(largest), fill="DodgerBlue3", tag="tag2")
+            self.canvas.itemconfig(self.canvas.find_withtag(arr[i]), fill="DodgerBlue3")
+            self.canvas.itemconfig(self.canvas.find_withtag(arr[largest]), fill="DodgerBlue3")
+            arr[i], arr[largest] = arr[largest], arr[i]
 
-            self.canvas.itemconfig(self.canvas.find_withtag("tag1"), tag=largest)
-            self.canvas.itemconfig(self.canvas.find_withtag("tag2"), tag=tgi)
-
-            self.heapify(n, ord(largest)-65)
+            self.heapify(arr, n, largest)
 
     def merge_sort(self, arr):
         self.label.configure(text="MergeSorting...")
