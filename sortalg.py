@@ -14,7 +14,8 @@ class App:
         self.bars = 20
         self.alg = tk.StringVar()
         self.alg.set("BubbleSort")
-        self.canvas = tk.Canvas(self.root, width=self.width, height=self.height, bd=0, highlightthickness=0)
+        self.canvas = tk.Canvas(self.root, width=self.width, height=self.height,
+                                bd=0, highlightthickness=0)
         self.create_ui()
         self.create_bars()
         self.canvas.after(0, self.animate)
@@ -23,7 +24,8 @@ class App:
     def create_ui(self):
         self.reset_button = tk.Button(self.root, text="Reset", command=lambda: self.reset())
         self.play_button = tk.Button(self.root, text="Play", command=lambda: self.play())
-        self.drop_menu = tk.OptionMenu(self.root, self.alg, "BubbleSort", "HeapSort", "MergeSort", "QuickSort")
+        self.drop_menu = tk.OptionMenu(self.root, self.alg,
+                                       "BubbleSort", "HeapSort", "MergeSort", "QuickSort")
         self.label = tk.Label(self.root, text="Choose the sorting alogrithm", bg="RoyalBlue2")
         self.drop_menu.grid(row=0, column=0, pady=10)
         self.play_button.grid(row=0, column=1)
@@ -37,7 +39,8 @@ class App:
         y = self.height
         for i in range(self.bars):
             tg = chr(i + 65)
-            self.canvas.create_rectangle(x, y, x + bar_width, random.randint(5, 45)*10, fill="DodgerBlue3", tag=tg)
+            self.canvas.create_rectangle(x, y, x + bar_width, random.randint(5, 45)*10,
+                                         fill="DodgerBlue3", tag=tg)
             x += bar_width
 
     def animate(self):
@@ -49,9 +52,11 @@ class App:
         self.play_button.configure(state="disabled")
         self.drop_menu.configure(state="disabled")
         if self.alg.get() == "BubbleSort":
+            self.label.configure(text="BubbleSorting...")
             self.bubble_sort([chr(c+65) for c in range(20)])
             self.label.configure(text="BubbleSorted! ;)")
         elif self.alg.get() == "HeapSort":
+            self.label.configure(text="HeapSorting...")
             self.heap_sort([chr(c+65) for c in range(20)])
             self.label.configure(text="HeapSorted! ;)")
         elif self.alg.get() == "MergeSort":
@@ -59,6 +64,7 @@ class App:
             self.canvas.create_rectangle(0, 20, 20, 40, fill="CadetBlue4", tag="rarray")
             self.canvas.create_text(25, 10, text="Left Array", anchor="w", tag="ltext")
             self.canvas.create_text(25, 30, text="Right Array", anchor="w", tag="rtext")
+            self.label.configure(text="MergeSorting...")
             self.merge_sort([chr(c+65) for c in range(20)])
             self.label.configure(text="MergeSorted! ;)")
             self.canvas.delete('larray')
@@ -68,6 +74,7 @@ class App:
         elif self.alg.get() == "QuickSort":
             self.canvas.create_rectangle(0, 0, 20, 20, fill="DodgerBlue4", tag="qspiv")
             self.canvas.create_text(25, 10, text="Pivot element", anchor="w", tag="txtpiv")
+            self.label.configure(text="QuickSorting...")
             self.quick_sort([chr(c+65) for c in range(20)], 0, self.bars-1)
             self.label.configure(text="QuickSorted! ;)")
             self.canvas.delete('qspiv')
@@ -82,7 +89,6 @@ class App:
         self.drop_menu.configure(state="active")
 
     def bubble_sort(self, arr):
-        self.label.configure(text="BubbleSorting...")
         n = len(arr)
         self.canvas.create_text(250, 0, text="", anchor="n", tag="bs")
         for i in range(n-1):
@@ -94,7 +100,8 @@ class App:
                 self.canvas.itemconfig(self.canvas.find_withtag(arr[j+1]), fill="DodgerBlue2")
                 self.canvas.update()
                 time.sleep(0.1)
-                xdistance = self.canvas.coords(self.canvas.find_withtag(arr[j+1]))[0] - self.canvas.coords(self.canvas.find_withtag(arr[j]))[0]
+                xdistance = (self.canvas.coords(self.canvas.find_withtag(arr[j+1]))[0]
+                             - self.canvas.coords(self.canvas.find_withtag(arr[j]))[0])
                 if bheight1 > bheight2:
                     self.canvas.itemconfig(self.canvas.find_withtag(arr[j]), fill="orange")
                     self.canvas.itemconfig(self.canvas.find_withtag(arr[j+1]), fill="orange")
@@ -109,7 +116,6 @@ class App:
         self.canvas.delete('bs')
 
     def quick_sort(self, arr, low, high):
-        self.label.configure(text="QuickSorting...")
         if low < high:
             p = self.partition(arr, low, high)
 
@@ -125,7 +131,9 @@ class App:
             bheight = self.height - self.canvas.coords(self.canvas.find_withtag(arr[j]))[1]
             if bheight <= pivot:
                 i += 1
-                xdistance = self.canvas.coords(self.canvas.find_withtag(arr[i]))[0] - self.canvas.coords(self.canvas.find_withtag(arr[j]))[0]
+                xdistance = (self.canvas.coords(self.canvas.find_withtag(arr[i]))[0]
+                             - self.canvas.coords(self.canvas.find_withtag(arr[j]))[0])
+
                 self.canvas.itemconfig(self.canvas.find_withtag(arr[i]), fill="orange")
                 self.canvas.itemconfig(self.canvas.find_withtag(arr[j]), fill="orange")
                 for c in range(int(abs(xdistance))):
@@ -145,7 +153,9 @@ class App:
                 self.canvas.itemconfig(self.canvas.find_withtag(arr[i]), fill="DodgerBlue3")
                 arr[i], arr[j] = arr[j], arr[i]
 
-        xdistance = self.canvas.coords(self.canvas.find_withtag(arr[high]))[0] - self.canvas.coords(self.canvas.find_withtag(arr[i+1]))[0]
+        xdistance = (self.canvas.coords(self.canvas.find_withtag(arr[high]))[0]
+                     - self.canvas.coords(self.canvas.find_withtag(arr[i+1]))[0])
+
         self.canvas.itemconfig(self.canvas.find_withtag(arr[high]), fill="orange")
         self.canvas.itemconfig(self.canvas.find_withtag(arr[i+1]), fill="orange")
         for c in range(int(abs(xdistance))):
@@ -167,14 +177,15 @@ class App:
         return i + 1
 
     def heap_sort(self, arr):
-        self.label.configure(text="HeapSorting...")
         n = len(arr)
         for i in range(n // 2 - 1, -1, -1):
             self.heapify(arr, n, i)
 
         for i in range(n-1, 0, -1):
 
-            xdistance = self.canvas.coords(self.canvas.find_withtag(arr[i]))[0] - self.canvas.coords(self.canvas.find_withtag(arr[0]))[0]
+            xdistance = (self.canvas.coords(self.canvas.find_withtag(arr[i]))[0]
+                         - self.canvas.coords(self.canvas.find_withtag(arr[0]))[0])
+
             self.canvas.itemconfig(self.canvas.find_withtag(arr[0]), fill="orange")
             self.canvas.itemconfig(self.canvas.find_withtag(arr[i]), fill="orange")
             for c in range(int(abs(xdistance))):
@@ -205,7 +216,9 @@ class App:
                 largest = right
 
         if largest != i:
-            xdistance = self.canvas.coords(self.canvas.find_withtag(arr[largest]))[0] - self.canvas.coords(self.canvas.find_withtag(arr[i]))[0]
+            xdistance = (self.canvas.coords(self.canvas.find_withtag(arr[largest]))[0]
+                         - self.canvas.coords(self.canvas.find_withtag(arr[i]))[0])
+
             self.canvas.itemconfig(self.canvas.find_withtag(arr[i]), fill="orange")
             self.canvas.itemconfig(self.canvas.find_withtag(arr[largest]), fill="orange")
             for c in range(int(abs(xdistance))):
@@ -228,7 +241,6 @@ class App:
             self.heapify(arr, n, largest)
 
     def merge_sort(self, arr):
-        self.label.configure(text="MergeSorting...")
         if len(arr) > 1:
             mid = len(arr) // 2
             L = arr[:mid]
@@ -244,7 +256,7 @@ class App:
             time.sleep(0.1)
             self.canvas.update()
             i = j = k = 0
-            dist = xdistance = self.canvas.coords(self.canvas.find_withtag(L[0]))[0]
+            dist = self.canvas.coords(self.canvas.find_withtag(L[0]))[0]
             while i < len(L) and j < len(R):
                 bheightl = self.height - self.canvas.coords(self.canvas.find_withtag(L[i]))[1]
                 bheightr = self.height - self.canvas.coords(self.canvas.find_withtag(R[j]))[1]
