@@ -55,19 +55,27 @@ class App:
             self.heap_sort()
             self.label.configure(text="HeapSorted! ;)")
         elif self.alg.get() == "MergeSort":
+            self.canvas.create_rectangle(0, 0, 20, 20, fill="CadetBlue1", tag="larray")
+            self.canvas.create_rectangle(0, 20, 20, 40, fill="CadetBlue4", tag="rarray")
+            self.canvas.create_text(25, 10, text="Left Array", anchor="w", tag="ltext")
+            self.canvas.create_text(25, 30, text="Right Array", anchor="w", tag="rtext")
             self.merge_sort([chr(c+65) for c in range(20)])
             self.label.configure(text="MergeSorted! ;)")
+            self.canvas.delete('larray')
+            self.canvas.delete('rarray')
+            self.canvas.delete('ltext')
+            self.canvas.delete('rtext')
         elif self.alg.get() == "QuickSort":
             self.quick_sort(chr(0+65), chr(self.bars - 1 + 65))
             self.label.configure(text="QuickSorted! ;)")
         self.reset_button.configure(state="active")
-        self.play_button.configure(state="active")
-        self.drop_menu.configure(state="active")
 
     def reset(self):
         self.canvas.delete('all')
         self.create_bars()
         self.label.configure(text="Choose the sorting algorithm")
+        self.play_button.configure(state="active")
+        self.drop_menu.configure(state="active")
 
     def bubble_sort(self):
         n = self.bars
@@ -233,7 +241,7 @@ class App:
             self.heapify(n, ord(largest)-65)
 
     def merge_sort(self, arr):
-        self.label.configure(text="MergeSorting")
+        self.label.configure(text="MergeSorting...")
         if len(arr) > 1:
             mid = len(arr) // 2
             L = arr[:mid]
@@ -241,6 +249,13 @@ class App:
 
             self.merge_sort(L)
             self.merge_sort(R)
+
+            for item in L:
+                self.canvas.itemconfig(self.canvas.find_withtag(item), fill="CadetBlue1")
+            for item in R:
+                self.canvas.itemconfig(self.canvas.find_withtag(item), fill="CadetBlue4")
+            time.sleep(0.1)
+            self.canvas.update()
             i = j = k = 0
             dist = xdistance = self.canvas.coords(self.canvas.find_withtag(L[0]))[0]
             while i < len(L) and j < len(R):
@@ -261,7 +276,7 @@ class App:
                             self.canvas.update()
                         else:
                             break
-                    self.canvas.itemconfig(self.canvas.find_withtag(L[i]), fill="DodgerBlue3")
+                    self.canvas.itemconfig(self.canvas.find_withtag(L[i]), fill="CadetBlue1")
                     i += 1
                 else:
                     arr[k] = R[j]
@@ -278,7 +293,7 @@ class App:
                             self.canvas.update()
                         else:
                             break
-                    self.canvas.itemconfig(self.canvas.find_withtag(R[j]), fill="DodgerBlue3")
+                    self.canvas.itemconfig(self.canvas.find_withtag(R[j]), fill="CadetBlue4")
                     j += 1
                 k += 1
                 dist += 25
@@ -298,7 +313,7 @@ class App:
                         self.canvas.update()
                     else:
                         break
-                self.canvas.itemconfig(self.canvas.find_withtag(L[i]), fill="DodgerBlue3")
+                self.canvas.itemconfig(self.canvas.find_withtag(L[i]), fill="CadetBlue1")
                 i += 1
                 k += 1
                 dist += 25
@@ -318,10 +333,12 @@ class App:
                         self.canvas.update()
                     else:
                         break
-                self.canvas.itemconfig(self.canvas.find_withtag(R[j]), fill="DodgerBlue3")
+                self.canvas.itemconfig(self.canvas.find_withtag(R[j]), fill="CadetBlue4")
                 j += 1
                 k += 1
                 dist += 25
+            for item in arr:
+                self.canvas.itemconfig(self.canvas.find_withtag(item), fill="DodgerBlue3")
 
 
 if __name__ == '__main__':
