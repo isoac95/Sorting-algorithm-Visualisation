@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import messagebox
 import random
 import time
 
@@ -14,7 +15,8 @@ class App:
         self.bars = 20
         self.alg = tk.StringVar()
         self.alg.set("BubbleSort")
-        self.canvas = tk.Canvas(self.root, width=self.width, height=self.height,
+        self.frame = tk.Frame(self.root, bg="RoyalBlue2")
+        self.canvas = tk.Canvas(self.frame, width=self.width+1, height=self.height+1,
                                 bd=0, highlightthickness=0)
         self.create_ui()
         self.create_bars()
@@ -22,16 +24,22 @@ class App:
         self.root.mainloop()
 
     def create_ui(self):
-        self.reset_button = tk.Button(self.root, text="Reset", command=lambda: self.reset())
-        self.play_button = tk.Button(self.root, text="Play", command=lambda: self.play())
-        self.drop_menu = tk.OptionMenu(self.root, self.alg,
+        self.reset_button = tk.Button(self.frame, text="Reset", width=5,
+                                      command=lambda: self.reset())
+        self.play_button = tk.Button(self.frame, text="Play", width=5, command=lambda: self.play())
+        self.drop_menu = tk.OptionMenu(self.frame, self.alg,
                                        "BubbleSort", "HeapSort", "MergeSort", "QuickSort")
+        self.drop_menu.configure(highlightthickness=0)
+        self.pause_button = tk.Button(self.frame, text="Pause", width=5, state="disabled",
+                                      command=lambda: self.pause())
         self.label = tk.Label(self.root, text="Choose the sorting alogrithm", bg="RoyalBlue2")
-        self.drop_menu.grid(row=0, column=0, pady=10)
-        self.play_button.grid(row=0, column=1)
-        self.reset_button.grid(row=0, column=2)
-        self.canvas.grid(row=1, column=0, columnspan=3, padx=10)
-        self.label.grid(row=2, column=1, pady=5)
+        self.frame.pack()
+        self.label.pack(pady=5)
+        self.drop_menu.grid(row=0, column=1, pady=5)
+        self.play_button.grid(row=0, column=5)
+        self.pause_button.grid(row=0, column=6)
+        self.reset_button.grid(row=0, column=7)
+        self.canvas.grid(row=1, column=0, columnspan=9, padx=10)
 
     def create_bars(self):
         bar_width = self.width // self.bars
@@ -51,13 +59,16 @@ class App:
         self.reset_button.configure(state="disabled")
         self.play_button.configure(state="disabled")
         self.drop_menu.configure(state="disabled")
+        self.pause_button.configure(state="active")
         if self.alg.get() == "BubbleSort":
             self.label.configure(text="BubbleSorting...")
             self.bubble_sort([chr(c+65) for c in range(20)])
+            self.pause_button.configure(state="disabled")
             self.label.configure(text="BubbleSorted! ;)")
         elif self.alg.get() == "HeapSort":
             self.label.configure(text="HeapSorting...")
             self.heap_sort([chr(c+65) for c in range(20)])
+            self.pause_button.configure(state="disabled")
             self.label.configure(text="HeapSorted! ;)")
         elif self.alg.get() == "MergeSort":
             self.canvas.create_rectangle(0, 0, 20, 20, fill="CadetBlue1", tag="larray")
@@ -66,6 +77,7 @@ class App:
             self.canvas.create_text(25, 30, text="Right Array", anchor="w", tag="rtext")
             self.label.configure(text="MergeSorting...")
             self.merge_sort([chr(c+65) for c in range(20)])
+            self.pause_button.configure(state="disabled")
             self.label.configure(text="MergeSorted! ;)")
             self.canvas.delete('larray')
             self.canvas.delete('rarray')
@@ -76,6 +88,7 @@ class App:
             self.canvas.create_text(25, 10, text="Pivot element", anchor="w", tag="txtpiv")
             self.label.configure(text="QuickSorting...")
             self.quick_sort([chr(c+65) for c in range(20)], 0, self.bars-1)
+            self.pause_button.configure(state="disabled")
             self.label.configure(text="QuickSorted! ;)")
             self.canvas.delete('qspiv')
             self.canvas.delete('txtpiv')
@@ -87,6 +100,9 @@ class App:
         self.label.configure(text="Choose the sorting algorithm")
         self.play_button.configure(state="active")
         self.drop_menu.configure(state="active")
+
+    def pause(self):
+        messagebox.showinfo("Animation paused!", "Press \"OK\" to resume")
 
     def bubble_sort(self, arr):
         n = len(arr)
