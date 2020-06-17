@@ -9,30 +9,35 @@ class App:
     def __init__(self):
         self.root = tk.Tk()
         self.root.title("Visualisation of Sorting algorithms by Ante Culo")
-        self.root.configure(bg="RoyalBlue2")
+        self.root.configure(bg="gray9")
         self.width = 500
         self.height = 500
         self.bars = 20
         self.alg = tk.StringVar()
         self.alg.set("BubbleSort")
-        self.frame = tk.Frame(self.root, bg="RoyalBlue2")
+        self.frame = tk.Frame(self.root, bg="gray9")
         self.canvas = tk.Canvas(self.frame, width=self.width+1, height=self.height+1,
-                                bd=0, highlightthickness=0)
+                                bd=0, highlightthickness=0, bg="gray15")
         self.create_ui()
         self.create_bars()
         self.canvas.after(0, self.animate)
         self.root.mainloop()
 
     def create_ui(self):
-        self.reset_button = tk.Button(self.frame, text="Reset", width=5,
+        self.reset_button = tk.Button(self.frame, text="Reset", width=5, bg="gray25", fg="white",
+                                      activebackground="gray25", activeforeground="white", bd=0,
                                       command=lambda: self.reset())
-        self.play_button = tk.Button(self.frame, text="Play", width=5, command=lambda: self.play())
+        self.play_button = tk.Button(self.frame, text="Play", width=5, bg="gray25", fg="white",
+                                     activebackground="gray25", activeforeground="white", bd=0,
+                                     command=lambda: self.play())
         self.drop_menu = tk.OptionMenu(self.frame, self.alg,
                                        "BubbleSort", "HeapSort", "MergeSort", "QuickSort")
-        self.drop_menu.configure(highlightthickness=0)
+        self.drop_menu.configure(highlightthickness=0, bd=0, bg="gray25", fg="white",
+                                 activebackground="gray25", activeforeground="white", width=10)
         self.pause_button = tk.Button(self.frame, text="Pause", width=5, state="disabled",
-                                      command=lambda: self.pause())
-        self.label = tk.Label(self.root, text="Choose the sorting alogrithm", bg="RoyalBlue2")
+                                      bd=0, bg="gray25", activebackground="gray25", fg="white",
+                                      activeforeground="white", command=lambda: self.pause())
+        self.label = tk.Label(self.root, text="Choose an alogrithm", bg="gray9", fg="white")
         self.frame.pack()
         self.label.pack(pady=5)
         self.drop_menu.grid(row=0, column=1, pady=5)
@@ -73,8 +78,10 @@ class App:
         elif self.alg.get() == "MergeSort":
             self.canvas.create_rectangle(0, 0, 20, 20, fill="CadetBlue1", tag="larray")
             self.canvas.create_rectangle(0, 20, 20, 40, fill="CadetBlue4", tag="rarray")
-            self.canvas.create_text(25, 10, text="Left Array", anchor="w", tag="ltext")
-            self.canvas.create_text(25, 30, text="Right Array", anchor="w", tag="rtext")
+            self.canvas.create_text(25, 10, text="Left Array", anchor="w",
+                                    tag="ltext", fill="white")
+            self.canvas.create_text(25, 30, text="Right Array", anchor="w",
+                                    tag="rtext", fill="white")
             self.label.configure(text="MergeSorting...")
             self.merge_sort([chr(c+65) for c in range(20)])
             self.pause_button.configure(state="disabled")
@@ -85,7 +92,8 @@ class App:
             self.canvas.delete('rtext')
         elif self.alg.get() == "QuickSort":
             self.canvas.create_rectangle(0, 0, 20, 20, fill="DodgerBlue4", tag="qspiv")
-            self.canvas.create_text(25, 10, text="Pivot element", anchor="w", tag="txtpiv")
+            self.canvas.create_text(25, 10, text="Pivot element", anchor="w", tag="txtpiv",
+                                    fill="white")
             self.label.configure(text="QuickSorting...")
             self.quick_sort([chr(c+65) for c in range(20)], 0, self.bars-1)
             self.pause_button.configure(state="disabled")
@@ -97,7 +105,7 @@ class App:
     def reset(self):
         self.canvas.delete('all')
         self.create_bars()
-        self.label.configure(text="Choose the sorting algorithm")
+        self.label.configure(text="Choose an algorithm")
         self.play_button.configure(state="active")
         self.drop_menu.configure(state="active")
 
@@ -106,7 +114,7 @@ class App:
 
     def bubble_sort(self, arr):
         n = len(arr)
-        self.canvas.create_text(250, 0, text="", anchor="n", tag="bs")
+        self.canvas.create_text(250, 0, text="", anchor="n", tag="bs", fill="white")
         for i in range(n-1):
             self.canvas.itemconfig(self.canvas.find_withtag("bs"), text="{}. iteration".format(i+1))
             for j in range(n-1):
